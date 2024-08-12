@@ -1,0 +1,37 @@
+services:
+  customer-data-db:
+    image: postgres:alpine
+    container_name: api-db-container
+    environment:
+      POSTGRES_PASSWORD: customerdb
+      POSTGRES_USER: apiuser
+      POSTGRES_DB: apipassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql-data:/var/lib/postgresql
+    networks:
+      - customer-data-api-network
+
+  customer-data-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: customer-data-api-container
+    depends_on:
+      - customer-data-db
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://customer-data-db:5432/customerdb?createDatabaseIfNotExist=true&characterEncoding=UTF-8&useUnicode=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: apiuser
+      SPRING_DATASOURCE_PASSWORD: apipassword
+    networks:
+      - customer-data-api-network
+
+networks:
+  customer-data-api-network:
+    driver: bridge
+
+volumes:
+  postgresql-data:

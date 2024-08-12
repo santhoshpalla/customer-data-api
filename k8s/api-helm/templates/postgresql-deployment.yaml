@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-postgresql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-postgresql
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-postgresql
+    spec:
+      containers:
+          - name: {{ .Release.Name }}-postgresql-container
+            image: customer-data-db:latest
+            env:
+              - name: POSTGRES_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ .Release.Name }}-postgresql-password
+                    key: password
+              - name: POSTGRES_DB
+                value: {{ .Values.postgresql.databaseName }}
+              - name: POSTGRES_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ .Release.Name }}-postgresql-username
+                    key: username
+            ports:
+              - containerPort: 5432
+            volumeMounts:
+              - name: {{ .Release.Name }}-postgresql-persistent-storage
+                mountPath: {{ .Values.postgresqlVolume.mountPath }}
+      volumes:
+        - name: {{ .Release.Name }}-postgresql-persistent-storage
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-postgresql-pvc
