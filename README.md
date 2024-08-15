@@ -63,8 +63,17 @@ kubectl get all
 ```
 
 ### 3. Port forward from localhost port to NodePort
-```
+```commandline
 kubectl port-forward svc/apichart 8081:8081
+```
+
+# OPEN TELEMETRY
+```commandline
+helm install my-otel-demo open-telemetry/opentelemetry-demo
+```
+
+```
+kubectl port-forward svc/my-otel-demo-frontendproxy 8080:8080
 ```
 
 # TEST
