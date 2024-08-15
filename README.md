@@ -8,7 +8,8 @@ Install following software to build and deploy this application
 2. docker-compose
 3. docker local registry
 4. kubernetes (eg: microk8s)
-5. helm
+6. ingress should be enabled 
+7. helm
 ````
 
 # BUILD STEPS
@@ -20,9 +21,9 @@ Install following software to build and deploy this application
 docker build -t customer-data-api-image .
 ```
 
-### 3. Build docker-compose image
+### 3. To verify the image
 ```commandline
-docker-compose build
+docker images
 ```
 
 ### 4. Setup a local docker registry
@@ -38,7 +39,7 @@ docker tag customer-data-api-image localhost:5000/customer-data-api
 docker pull postgres:alpine
 ```
 ```commandline
-docker tag postgres localhost:5000/customer-data-db
+docker tag postgres:alpine localhost:5000/customer-data-db
 ```
 
 ### 6. Pushing to the local docker registry
@@ -51,23 +52,32 @@ docker push localhost:5000/customer-data-db
 
 # DEPLOY STEPS
 
-### 1. Add local registry to helm chart
+### 1. Install through helm
 ```commandline
-helm registry localhost:5000
+helm install apichart ./k8s/apichart/
 ```
 
-### 2. Install through helm
-```commandline
-helm install api-helm ./k8s/api-helm/
-```
-
-### 3. Check the resources of kubernetes
+### 2. Check the resources of kubernetes
 ```commandline
 kubectl get all
 ```
 
+### 3. Port forward from localhost port to NodePort
+```commandline
+kubectl port-forward svc/apichart 8081:8081
+```
+
+# OPEN TELEMETRY
+```commandline
+helm install my-otel-demo open-telemetry/opentelemetry-demo
+```
+
+```
+kubectl port-forward svc/my-otel-demo-frontendproxy 8080:8080
+```
+
 # TEST
-Below provided curl commands can be used to test, replace the localhost with host ip address for using them
+Below provided curl commands can be used to test
 
 ### 1. get all customers
 ```commandline

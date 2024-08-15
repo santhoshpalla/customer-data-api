@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
           - name: {{ .Release.Name }}-postgresql-container
-            image: customer-data-db:latest
+            image: localhost:5000/customer-data-db
             env:
               - name: POSTGRES_PASSWORD
                 valueFrom:
