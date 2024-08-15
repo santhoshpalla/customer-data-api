@@ -50,7 +50,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: customer.com
+    - host: customer-data-api.com
       paths:
         - path: /
           pathType: Prefix
@@ -71,14 +71,14 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
-livenessProbe:
-  httpGet:
-    path: /actuator/health/liveness
-    port: http
-readinessProbe:
-  httpGet:
-    path: /actuator/health/readiness
-    port: http
+#livenessProbe:
+#  httpGet:
+#    path: actuator/health/liveness
+#    port: http
+#readinessProbe:
+#  httpGet:
+#    path: actuator/health/readiness
+#    port: http
 
 autoscaling:
   enabled: false
